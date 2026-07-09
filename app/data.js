@@ -1,4 +1,5 @@
 import { FREQUENCIES, REQUIRED_FIELDS } from './constants.js';
+import { DEFAULT_TASKS } from './defaultTasks.js';
 import { buildPlan } from './planning.js';
 import { renderAll } from './render.js';
 import { state } from './state.js';
@@ -13,13 +14,7 @@ export async function loadExample() {
     return;
   }
 
-  try {
-    const res = await fetch('tasks.json');
-    if (!res.ok) throw new Error('Kunne ikke indlæse tasks.json');
-    setTasks(await res.json(), 'Eksempeldata indlæst.');
-  } catch {
-    setStatus('Åbn via GitHub Pages eller vælg tasks.json manuelt, hvis browseren blokerer lokal fetch.');
-  }
+  setTasks(DEFAULT_TASKS, 'Eksempeldata indlæst.');
 }
 
 export function handleFile(event) {
