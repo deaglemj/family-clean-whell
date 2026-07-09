@@ -136,7 +136,7 @@ function badgeClass(t) { return t.Opgavetype === 'Bil' ? 'car' : t.Opgavetype ==
 
 function renderAll() {
   if (!tasks.length) return;
-  renderDashboard(); renderWeek(); renderRoutines(); renderWheel(); renderPlanning(); renderDatabase(); renderHouse(); renderCar(); renderHelp();
+  renderDashboard(); renderWeek(); renderWheel(); renderPlanning(); renderDatabase(); renderHouse(); renderCar(); renderHelp();
 }
 
 function renderDashboard() {
@@ -151,10 +151,10 @@ function card(label, value) { return `<article class="card"><span>${esc(label)}<
 
 function renderWeek() {
   const week = Number($('weekSelect').value);
-  const list = visibleTasks(plan.get(week) || []);
-  $('week').innerHTML = `<h2 class="print-title">Uge ${week}</h2><div class="panel"><h2>Uge ${week}</h2><p>Ekstraarbejde: ${loadForWeek(week)} minutter</p></div>${table(list, ['Opgave','Rum','Kategori','Estimeret tid','Belastning','Noter'])}`;
+  const weekTasks = visibleTasks(plan.get(week) || []);
+  const routines = visibleTasks(tasks.filter(t => isActive(t) && t.Opgavetype === 'Rutine'));
+  $('week').innerHTML = `<h2 class="print-title">Uge ${week}</h2><div class="panel"><h2>Denne uge</h2><p>Uge ${week} · Ekstraarbejde: ${loadForWeek(week)} minutter</p></div><h2>Årshjul-opgaver</h2>${table(weekTasks, ['Opgave','Rum','Kategori','Estimeret tid','Belastning','Noter'])}<h2>Rutiner</h2>${table(routines, ['Opgave','Rum','Kategori','Frekvens','Estimeret tid','Noter'])}`;
 }
-function renderRoutines() { $('routines').innerHTML = `<h2>Rutiner</h2>${table(visibleTasks(tasks.filter(t => isActive(t) && t.Opgavetype === 'Rutine')), REQUIRED_FIELDS)}`; }
 function renderCar() { $('car').innerHTML = `<h2>Bil</h2>${table(visibleTasks(tasks.filter(t => isActive(t) && t.Opgavetype === 'Bil')), REQUIRED_FIELDS)}`; }
 function renderHouse() { $('house').innerHTML = `<h2>Husets oplysninger</h2>${table(visibleTasks(tasks.filter(t => t.Kategori === 'Husets oplysninger' || /robot|pliss|badeforhæng|uldsofa|tæppe|vinduesfyldninger|terrasse/i.test(`${t.Rum} ${t.Opgave} ${t.Noter}`))), REQUIRED_FIELDS)}`; }
 function renderDatabase() { $('database').innerHTML = `<h2>Opgavedatabase</h2>${table(visibleTasks(tasks), REQUIRED_FIELDS)}`; }
