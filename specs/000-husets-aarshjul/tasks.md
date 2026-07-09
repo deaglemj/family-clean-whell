@@ -12,22 +12,27 @@
 ## Existing app structure
 
 - [x] Keep root `index.html` as GitHub Pages entrypoint.
-- [x] Keep main app UI in `app/index.html`.
+- [x] Keep main app files in `app/`.
 - [x] Keep JavaScript modules in `app/`.
 - [x] Keep stylesheet in `app/styles.css`.
+- [x] Add `app/dashboard.html`.
+- [x] Add `app/currentWeek.html`.
+- [x] Add `app/yearWheel.html`.
+- [x] Add `app/taskList.html`.
+- [x] Redirect `app/index.html` to `app/dashboard.html`.
 
 ## App verification
 
-- [X] Verify task data loading.
+- [x] Verify task data loading.
 - [x] Verify tasks are rendered from one master list.
 - [x] Verify selected week overview.
 - [x] Verify week selector.
 - [x] Verify print layout for selected week.
 - [x] Verify that the app runs without backend/database/server-side code.
-- [ ] Verify that the app can be hosted on GitHub Pages.
+- [x] Verify that the app can be hosted on GitHub Pages from `/root`.
 
 ## Documentation
 
-- [ ] Add app usage instructions.
-- [ ] Document expected task data format.
-- [ ] Document GitHub Pages setup.
+- [x] Add app usage instructions.
+- [x] Document expected task data format.
+- [x] Document GitHub Pages setup.
