@@ -5,12 +5,13 @@ import {
   isActive,
   isOddWeek,
   loadForWeek,
+  tasksForWeek,
   visibleTasks,
   weeklyTasks,
   badgeClass
 } from './planning.js';
 import { state } from './state.js';
-import { $, esc } from './utils.js';
+import { $, esc, getIsoWeek } from './utils.js';
 
 const WEEK_TABLE_FIELDS = ['Done', 'Opgave', 'Rum', 'Kategori', 'Estimeret tid', 'Belastning', 'Noter'];
 const DATABASE_FIELDS = [...REQUIRED_FIELDS, 'Uge'];
@@ -32,22 +33,25 @@ export function renderAll() {
 }
 
 export function renderDashboard() {
-  const active = state.tasks.filter(isActive);
-  const selectedWeek = Number($('weekSelect')?.value || 1);
+  const week = getIsoWeek(new Date());
+  const tasks = tasksForWeek(week);
+  const items = tasks.map(task => dashboardTaskItem(task, week)).join('');
 
   $('dashboard').innerHTML = `
-    <div class="grid">
-      ${card('Aktive opgaver', active.length)}
-      ${card('Faste ugentlige', weeklyTasks().length)}
-      ${card('14-dages opgaver', state.tasks.filter(t => isActive(t) && (t.Opgavetype === '14-dage' || t.Frekvens === 'Hver 14. dag')).length)}
-      ${card('Ekstra ugeopgaver', state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Ekstra').length)}
-      ${card('Valgt uge', `Uge ${selectedWeek}`)}
-      ${card('Ugens tid', `${loadForWeek(selectedWeek)} min`)}
-    </div>
-    <div class="panel intro-panel">
-      <h2>52-ugers rengøringsårshjul</h2>
-      <p>Hver uge viser faste opgaver, 14-dages opgaver i ulige uger og én planlagt ekstraopgave hvis ugen har en.</p>
-    </div>
+    <ul class="dashboard-task-list">
+      ${items || '<li>Ingen opgaver</li>'}
+    </ul>
+  `;
+}
+
+function dashboardTaskItem(task, week) {
+  return `
+    <li>
+      <label>
+        <input class="task-check" type="checkbox" data-task-id="${esc(task.ID)}" data-week="${week}" ${isCompleted(task.ID, week) ? 'checked' : ''}>
+        <span>${esc(task.Opgave)}</span>
+      </label>
+    </li>
   `;
 }
 
@@ -142,10 +146,13 @@ function bindCompletionInputs() {
   document.querySelectorAll('.task-check').forEach(input => {
     input.addEventListener('change', () => {
       const completed = readCompleted();
+      const week = Number(input.dataset.week || currentWeek());
+      const key = completionKey(input.dataset.taskId, week);
+
       if (input.checked) {
-        completed.add(completionKey(input.dataset.taskId, currentWeek()));
+        completed.add(key);
       } else {
-        completed.delete(completionKey(input.dataset.taskId, currentWeek()));
+        completed.delete(key);
       }
       localStorage.setItem(COMPLETION_STORAGE_KEY, JSON.stringify([...completed]));
     });
