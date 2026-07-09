@@ -1,10 +1,15 @@
-import { LIGHT_WEEKS, REQUIRED_FIELDS } from './constants.js';
+import { LIGHT_WEEKS, REQUIRED_FIELDS, WEEK_COUNT } from './constants.js';
 import { isActive, visibleTasks, loadForWeek, badgeClass } from './planning.js';
 import { state } from './state.js';
 import { $, esc } from './utils.js';
 
+const WEEK_TABLE_FIELDS = ['Opgave', 'Rum', 'Kategori', 'Estimeret tid', 'Belastning', 'Noter'];
+const ROUTINE_TABLE_FIELDS = ['Opgave', 'Rum', 'Kategori', 'Frekvens', 'Estimeret tid', 'Noter'];
+const HOUSE_SEARCH_PATTERN = /robot|pliss|badeforhæng|uldsofa|tæppe|vinduesfyldninger|terrasse/i;
+
 export function renderAll() {
   if (!state.tasks.length) return;
+
   renderDashboard();
   renderWeek();
   renderWheel();
@@ -17,11 +22,17 @@ export function renderAll() {
 
 export function renderDashboard() {
   const active = state.tasks.filter(isActive);
-  $('dashboard').innerHTML = `<div class="grid">
-    ${card('Aktive opgaver', active.length)}${card('Årshjul', active.filter(t => t.Opgavetype === 'Årshjul').length)}
-    ${card('Rutiner', active.filter(t => t.Opgavetype === 'Rutine').length)}${card('Bil-opgaver', active.filter(t => t.Opgavetype === 'Bil').length)}
-    ${card('Årlig tid', `${active.reduce((s, t) => s + Number(t['Årlig tid'] || 0), 0)} min`)}${card('Valgt uge', `Uge ${$('weekSelect').value}`)}
-  </div>`;
+
+  $('dashboard').innerHTML = `
+    <div class="grid">
+      ${card('Aktive opgaver', active.length)}
+      ${card('Årshjul', countByType(active, 'Årshjul'))}
+      ${card('Rutiner', countByType(active, 'Rutine'))}
+      ${card('Bil-opgaver', countByType(active, 'Bil'))}
+      ${card('Årlig tid', `${sumAnnualTime(active)} min`)}
+      ${card('Valgt uge', `Uge ${$('weekSelect').value}`)}
+    </div>
+  `;
 }
 
 export function card(label, value) {
@@ -32,15 +43,32 @@ export function renderWeek() {
   const week = Number($('weekSelect').value);
   const weekTasks = visibleTasks(state.plan.get(week) || []);
   const routines = visibleTasks(state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Rutine'));
-  $('week').innerHTML = `<h2 class="print-title">Uge ${week}</h2><div class="panel"><h2>Denne uge</h2><p>Uge ${week} · Ekstraarbejde: ${loadForWeek(week)} minutter</p></div><h2>Årshjul-opgaver</h2>${table(weekTasks, ['Opgave', 'Rum', 'Kategori', 'Estimeret tid', 'Belastning', 'Noter'])}<h2>Rutiner</h2>${table(routines, ['Opgave', 'Rum', 'Kategori', 'Frekvens', 'Estimeret tid', 'Noter'])}`;
+
+  $('week').innerHTML = `
+    <h2 class="print-title">Uge ${week}</h2>
+    <div class="panel">
+      <h2>Denne uge</h2>
+      <p>Uge ${week} · Ekstraarbejde: ${loadForWeek(week)} minutter</p>
+    </div>
+    <h2>Årshjul-opgaver</h2>
+    ${table(weekTasks, WEEK_TABLE_FIELDS)}
+    <h2>Rutiner</h2>
+    ${table(routines, ROUTINE_TABLE_FIELDS)}
+  `;
 }
 
 export function renderCar() {
-  $('car').innerHTML = `<h2>Bil</h2>${table(visibleTasks(state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Bil')), REQUIRED_FIELDS)}`;
+  const tasks = state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Bil');
+  $('car').innerHTML = `<h2>Bil</h2>${table(visibleTasks(tasks), REQUIRED_FIELDS)}`;
 }
 
 export function renderHouse() {
-  $('house').innerHTML = `<h2>Husets oplysninger</h2>${table(visibleTasks(state.tasks.filter(t => t.Kategori === 'Husets oplysninger' || /robot|pliss|badeforhæng|uldsofa|tæppe|vinduesfyldninger|terrasse/i.test(`${t.Rum} ${t.Opgave} ${t.Noter}`))), REQUIRED_FIELDS)}`;
+  const tasks = state.tasks.filter(task => {
+    const searchableText = `${task.Rum} ${task.Opgave} ${task.Noter}`;
+    return task.Kategori === 'Husets oplysninger' || HOUSE_SEARCH_PATTERN.test(searchableText);
+  });
+
+  $('house').innerHTML = `<h2>Husets oplysninger</h2>${table(visibleTasks(tasks), REQUIRED_FIELDS)}`;
 }
 
 export function renderDatabase() {
@@ -48,16 +76,24 @@ export function renderDatabase() {
 }
 
 export function renderWheel() {
-  const html = Array.from({ length: 52 }, (_, i) => {
+  const html = Array.from({ length: WEEK_COUNT }, (_, i) => {
     const week = i + 1;
     const items = visibleTasks(state.plan.get(week) || []);
-    return `<article class="week-card ${LIGHT_WEEKS.has(week) ? 'light' : ''}"><h3>Uge ${week}</h3><p>${loadForWeek(week)} min</p><ul class="clean">${items.map(t => `<li>${esc(t.Opgave)} <span class="badge ${badgeClass(t)}">${esc(t.Belastning)}</span></li>`).join('') || '<li>Bonus-/opsamlingsuge</li>'}</ul></article>`;
+
+    return `
+      <article class="week-card ${LIGHT_WEEKS.has(week) ? 'light' : ''}">
+        <h3>Uge ${week}</h3>
+        <p>${loadForWeek(week)} min</p>
+        <ul class="clean">${renderWheelTasks(items)}</ul>
+      </article>
+    `;
   }).join('');
+
   $('wheel').innerHTML = `<h2>Årshjul</h2><div class="week-grid">${html}</div>`;
 }
 
 export function renderPlanning() {
-  const rows = Array.from({ length: 52 }, (_, i) => ({
+  const rows = Array.from({ length: WEEK_COUNT }, (_, i) => ({
     Uge: i + 1,
     Opgaver: (state.plan.get(i + 1) || []).length,
     Minutter: loadForWeek(i + 1),
@@ -71,16 +107,51 @@ export function renderHelp() {
 }
 
 export function table(rows, fields) {
-  return `<div class="table-wrap"><table><thead><tr>${fields.map(f => `<th>${esc(f)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${fields.map(f => `<td>${cell(r, f)}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${fields.length}">Ingen opgaver</td></tr>`}</tbody></table></div>`;
+  const headers = fields.map(field => `<th>${esc(field)}</th>`).join('');
+  const body = rows.map(row => renderTableRow(row, fields)).join('');
+  const emptyRow = `<tr><td colspan="${fields.length}">Ingen opgaver</td></tr>`;
+
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${headers}</tr></thead>
+        <tbody>${body || emptyRow}</tbody>
+      </table>
+    </div>
+  `;
 }
 
 export function objectTable(rows) {
   return table(rows, Object.keys(rows[0] || {}));
 }
 
+function renderTableRow(row, fields) {
+  return `<tr>${fields.map(field => `<td>${cell(row, field)}</td>`).join('')}</tr>`;
+}
+
+function renderWheelTasks(items) {
+  if (!items.length) return '<li>Bonus-/opsamlingsuge</li>';
+
+  return items.map(task => `
+    <li>
+      ${esc(task.Opgave)}
+      <span class="badge ${badgeClass(task)}">${esc(task.Belastning)}</span>
+    </li>
+  `).join('');
+}
+
 export function cell(row, field) {
   if (field === 'Belastning' || field === 'Opgavetype') {
     return `<span class="badge ${badgeClass(row)}">${esc(row[field] ?? '')}</span>`;
   }
+
   return esc(row[field] ?? '');
+}
+
+function countByType(tasks, type) {
+  return tasks.filter(task => task.Opgavetype === type).length;
+}
+
+function sumAnnualTime(tasks) {
+  return tasks.reduce((sum, task) => sum + Number(task['Årlig tid'] || 0), 0);
 }

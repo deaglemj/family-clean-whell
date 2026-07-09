@@ -12,49 +12,251 @@
   --medium: #ffedd5;
   --low: #ecfccb;
 }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: var(--text); background: var(--bg); }
-.app-header { display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem; background: var(--panel); border-bottom: 1px solid var(--border); }
-h1 { margin: 0 0 .25rem; }
-p { margin: 0; color: var(--muted); }
-.actions, .toolbar { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
-button, .file-label, select, input { border: 1px solid var(--border); border-radius: .5rem; background: var(--panel); padding: .55rem .75rem; font: inherit; }
-button, .file-label { cursor: pointer; }
-button.active, button:hover { border-color: var(--accent); color: var(--accent); }
-.file-label input { display: none; }
-.tabs { display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem 1.25rem; background: var(--panel); border-bottom: 1px solid var(--border); }
-main { padding: 1.25rem; }
-.toolbar { margin-bottom: 1rem; }
-.toolbar label { display: grid; gap: .25rem; font-size: .9rem; color: var(--muted); }
-.status { margin-bottom: 1rem; color: var(--muted); }
-.view { display: none; }
-.active-view { display: block; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
-.card, .week-card, .panel { background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; padding: 1rem; }
-.card strong { display: block; font-size: 1.8rem; margin-top: .25rem; }
-.table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--border); border-radius: .75rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: .65rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-th { background: #f3f4f6; font-weight: 650; }
-.badge { display: inline-block; padding: .2rem .45rem; border-radius: 999px; font-size: .8rem; background: #eef2ff; }
-.badge.low { background: var(--low); }
-.badge.medium { background: var(--medium); }
-.badge.heavy { background: var(--heavy); }
-.badge.car { background: var(--car); }
-.badge.routine { background: var(--routine); }
-.week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .75rem; }
-.week-card.light { background: var(--light); }
-.week-card h3 { margin: 0 0 .5rem; }
-ul.clean { margin: .5rem 0 0; padding-left: 1.1rem; }
-.print-title { display: none; }
+
+/* Base */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+h1 {
+  margin: 0 0 .25rem;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+}
+
+button,
+.file-label,
+select,
+input {
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: .55rem .75rem;
+  background: var(--panel);
+  font: inherit;
+}
+
+button,
+.file-label {
+  cursor: pointer;
+}
+
+button.active,
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Layout */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.actions,
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: .75rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding: .75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+main {
+  padding: 1.25rem;
+}
+
+.toolbar {
+  margin-bottom: 1rem;
+}
+
+.toolbar label {
+  display: grid;
+  gap: .25rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.status {
+  margin-bottom: 1rem;
+  color: var(--muted);
+}
+
+.view {
+  display: none;
+}
+
+.active-view {
+  display: block;
+}
+
+/* Components */
+.file-label input {
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.card,
+.week-card,
+.panel {
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  padding: 1rem;
+  background: var(--panel);
+}
+
+.card strong {
+  display: block;
+  margin-top: .25rem;
+  font-size: 1.8rem;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: .2rem .45rem;
+  background: #eef2ff;
+  font-size: .8rem;
+}
+
+.badge.low {
+  background: var(--low);
+}
+
+.badge.medium {
+  background: var(--medium);
+}
+
+.badge.heavy {
+  background: var(--heavy);
+}
+
+.badge.car {
+  background: var(--car);
+}
+
+.badge.routine {
+  background: var(--routine);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background: var(--panel);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: .65rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f3f4f6;
+  font-weight: 650;
+}
+
+/* Week wheel */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: .75rem;
+}
+
+.week-card.light {
+  background: var(--light);
+}
+
+.week-card h3 {
+  margin: 0 0 .5rem;
+}
+
+ul.clean {
+  margin: .5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+/* Print */
+.print-title {
+  display: none;
+}
+
 @media print {
-  body { background: #fff; }
-  .no-print, .tabs, .toolbar, #status, .app-header { display: none !important; }
-  main { padding: 0; }
-  .view { display: none !important; }
-  #week { display: block !important; }
-  .print-title { display: block; }
-  .table-wrap, .panel { border: 0; }
-  th, td { border: 1px solid #999; padding: .4rem; }
-  table { font-size: 11pt; }
+  body {
+    background: #fff;
+  }
+
+  .no-print,
+  .tabs,
+  .toolbar,
+  #status,
+  .app-header {
+    display: none !important;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  .view {
+    display: none !important;
+  }
+
+  #week {
+    display: block !important;
+  }
+
+  .print-title {
+    display: block;
+  }
+
+  .table-wrap,
+  .panel {
+    border: 0;
+  }
+
+  table {
+    font-size: 11pt;
+  }
+
+  th,
+  td {
+    border: 1px solid #999;
+    padding: .4rem;
+  }
 }

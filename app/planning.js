@@ -1,10 +1,11 @@
-import { LIGHT_WEEKS, SEASON_WEEKS } from './constants.js';
+import { FREQUENCY_COUNTS, LIGHT_WEEKS, SEASON_WEEKS, WEEK_COUNT } from './constants.js';
 import { state } from './state.js';
 
 export function buildPlan() {
-  state.plan = new Map(Array.from({ length: 52 }, (_, i) => [i + 1, []]));
+  state.plan = createWeekMap([]);
+
   const yearTasks = state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Årshjul');
-  const load = new Map(Array.from({ length: 52 }, (_, i) => [i + 1, 0]));
+  const load = createWeekMap(0);
 
   yearTasks.forEach(task => {
     const count = Number(task['Antal pr. år']) || countFromFrequency(task.Frekvens);
@@ -17,9 +18,17 @@ export function buildPlan() {
   });
 }
 
+function createWeekMap(defaultValue) {
+  return new Map(Array.from({ length: WEEK_COUNT }, (_, i) => {
+    const value = Array.isArray(defaultValue) ? [] : defaultValue;
+    return [i + 1, value];
+  }));
+}
+
 export function pickWeeks(candidates, count, task, load) {
   const result = [];
   const spacing = Math.max(1, Math.floor(candidates.length / Math.max(1, count)));
+
   for (let i = 0; i < count; i++) {
     const targetIndex = Math.min(candidates.length - 1, i * spacing);
     const ranked = [...candidates].sort((a, b) => {
@@ -46,15 +55,7 @@ export function weeksForSeason(season = 'Hele året') {
 }
 
 export function countFromFrequency(freq) {
-  return ({
-    'Flere gange ugentligt': 52,
-    'Ugentligt': 52,
-    'Hver 14. dag': 26,
-    'Månedligt': 12,
-    'Kvartalsvist': 4,
-    'Halvårligt': 2,
-    'Årligt': 1
-  })[freq] || 1;
+  return FREQUENCY_COUNTS[freq] || 1;
 }
 
 export function isActive(task) {

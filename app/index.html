@@ -9,6 +9,7 @@
 </head>
 
 <body>
+  <!-- Header actions -->
   <header class="app-header no-print">
     <div>
       <h1>Husets Årshjul</h1>
@@ -23,6 +24,7 @@
     </div>
   </header>
 
+  <!-- Main navigation -->
   <nav class="tabs no-print" aria-label="Visninger">
     <button data-view="dashboard" class="active">Dashboard</button>
     <button data-view="week">Denne uge</button>
@@ -35,6 +37,7 @@
   </nav>
 
   <main>
+    <!-- Filters -->
     <section class="toolbar no-print">
       <label>Valgt uge
         <select id="weekSelect"></select>
@@ -49,6 +52,7 @@
       </label>
     </section>
 
+    <!-- Status and views -->
     <section id="status" class="status no-print"></section>
 
     <section id="dashboard" class="view active-view"></section>
