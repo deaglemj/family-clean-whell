@@ -4,12 +4,20 @@ import { renderAll } from './render.js';
 import { state } from './state.js';
 import { $, esc } from './utils.js';
 
+const TASK_STORAGE_KEY = 'husets-aarshjul-tasks';
+
 export async function loadExample() {
+  const stored = readStoredTasks();
+  if (stored) {
+    setTasks(stored, 'Gemte opgaver indlæst.');
+    return;
+  }
+
   try {
     const res = await fetch('tasks.json');
     if (!res.ok) throw new Error('Kunne ikke indlæse tasks.json');
     setTasks(await res.json(), 'Eksempeldata indlæst.');
-  } catch (err) {
+  } catch {
     setStatus('Åbn via GitHub Pages eller vælg tasks.json manuelt, hvis browseren blokerer lokal fetch.');
   }
 }
@@ -21,7 +29,9 @@ export function handleFile(event) {
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      setTasks(JSON.parse(reader.result), `${file.name} indlæst.`);
+      const data = JSON.parse(reader.result);
+      localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(data));
+      setTasks(data, `${file.name} indlæst.`);
     } catch {
       setStatus('JSON-filen kunne ikke læses.');
     }
@@ -43,12 +53,23 @@ export function setTasks(data, message) {
 }
 
 export function setStatus(text) {
-  $('status').textContent = text;
+  if ($('status')) $('status').textContent = text;
 }
 
 export function populateFilters() {
+  if (!$('categoryFilter')) return;
+
   const current = $('categoryFilter').value;
   const cats = [...new Set(state.tasks.map(t => t.Kategori))].sort();
   $('categoryFilter').innerHTML = '<option value="">Alle</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
   $('categoryFilter').value = cats.includes(current) ? current : '';
+}
+
+function readStoredTasks() {
+  try {
+    const raw = localStorage.getItem(TASK_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
 }
