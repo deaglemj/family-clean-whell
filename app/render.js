@@ -5,19 +5,18 @@ import { $, esc } from './utils.js';
 
 const WEEK_TABLE_FIELDS = ['Opgave', 'Rum', 'Kategori', 'Estimeret tid', 'Belastning', 'Noter'];
 const ROUTINE_TABLE_FIELDS = ['Opgave', 'Rum', 'Kategori', 'Frekvens', 'Estimeret tid', 'Noter'];
-const HOUSE_SEARCH_PATTERN = /robot|pliss|badeforhæng|uldsofa|tæppe|vinduesfyldninger|terrasse/i;
 
 export function renderAll() {
   if (!state.tasks.length) return;
 
-  renderDashboard();
-  renderWeek();
-  renderWheel();
-  renderPlanning();
-  renderDatabase();
-  renderHouse();
-  renderCar();
-  renderHelp();
+  if ($('dashboard')) renderDashboard();
+  if ($('week')) renderWeek();
+  if ($('wheel')) renderWheel();
+  if ($('database')) renderDatabase();
+
+  if (state.activeView === 'week' && new URLSearchParams(window.location.search).get('print') === '1') {
+    window.setTimeout(() => window.print(), 150);
+  }
 }
 
 export function renderDashboard() {
@@ -30,7 +29,11 @@ export function renderDashboard() {
       ${card('Rutiner', countByType(active, 'Rutine'))}
       ${card('Bil-opgaver', countByType(active, 'Bil'))}
       ${card('Årlig tid', `${sumAnnualTime(active)} min`)}
-      ${card('Valgt uge', `Uge ${$('weekSelect').value}`)}
+      ${card('Valgt uge', `Uge ${$('weekSelect')?.value || '-'}`)}
+    </div>
+    <div class="panel intro-panel">
+      <h2>Sådan bruges siden</h2>
+      <p>Indlæs en lokal JSON-fil eller brug eksempeldata. Alle visninger bygger på samme masterliste.</p>
     </div>
   `;
 }
@@ -40,12 +43,12 @@ export function card(label, value) {
 }
 
 export function renderWeek() {
-  const week = Number($('weekSelect').value);
+  const week = Number($('weekSelect')?.value || 1);
   const weekTasks = visibleTasks(state.plan.get(week) || []);
   const routines = visibleTasks(state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Rutine'));
 
   $('week').innerHTML = `
-    <h2 class="print-title">Uge ${week}</h2>
+    <h2 class="print-title">Husets Årshjul · Uge ${week}</h2>
     <div class="panel">
       <h2>Denne uge</h2>
       <p>Uge ${week} · Ekstraarbejde: ${loadForWeek(week)} minutter</p>
@@ -57,22 +60,8 @@ export function renderWeek() {
   `;
 }
 
-export function renderCar() {
-  const tasks = state.tasks.filter(t => isActive(t) && t.Opgavetype === 'Bil');
-  $('car').innerHTML = `<h2>Bil</h2>${table(visibleTasks(tasks), REQUIRED_FIELDS)}`;
-}
-
-export function renderHouse() {
-  const tasks = state.tasks.filter(task => {
-    const searchableText = `${task.Rum} ${task.Opgave} ${task.Noter}`;
-    return task.Kategori === 'Husets oplysninger' || HOUSE_SEARCH_PATTERN.test(searchableText);
-  });
-
-  $('house').innerHTML = `<h2>Husets oplysninger</h2>${table(visibleTasks(tasks), REQUIRED_FIELDS)}`;
-}
-
 export function renderDatabase() {
-  $('database').innerHTML = `<h2>Opgavedatabase</h2>${table(visibleTasks(state.tasks), REQUIRED_FIELDS)}`;
+  $('database').innerHTML = `<h2>Opgaveliste</h2>${table(visibleTasks(state.tasks), REQUIRED_FIELDS)}`;
 }
 
 export function renderWheel() {
@@ -92,20 +81,6 @@ export function renderWheel() {
   $('wheel').innerHTML = `<h2>Årshjul</h2><div class="week-grid">${html}</div>`;
 }
 
-export function renderPlanning() {
-  const rows = Array.from({ length: WEEK_COUNT }, (_, i) => ({
-    Uge: i + 1,
-    Opgaver: (state.plan.get(i + 1) || []).length,
-    Minutter: loadForWeek(i + 1),
-    Note: LIGHT_WEEKS.has(i + 1) ? 'Let uge' : loadForWeek(i + 1) > 60 ? 'Over ca. 60 minutter' : ''
-  }));
-  $('planning').innerHTML = `<h2>Planlægning</h2>${objectTable(rows)}`;
-}
-
-export function renderHelp() {
-  $('help').innerHTML = `<div class="panel"><h2>Hjælp</h2><p>Indlæs en lokal JSON-fil med samme felter som tasks.json. Vælg uge for at se og printe ugeoversigten. GitHub Pages kræver ingen backend, database eller build step.</p></div>`;
-}
-
 export function table(rows, fields) {
   const headers = fields.map(field => `<th>${esc(field)}</th>`).join('');
   const body = rows.map(row => renderTableRow(row, fields)).join('');
@@ -119,10 +94,6 @@ export function table(rows, fields) {
       </table>
     </div>
   `;
-}
-
-export function objectTable(rows) {
-  return table(rows, Object.keys(rows[0] || {}));
 }
 
 function renderTableRow(row, fields) {
