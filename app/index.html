@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="da">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Husets Årshjul</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <header class="app-header no-print">
     <div>
@@ -41,7 +43,9 @@
         <input id="searchInput" type="search" placeholder="Rum, opgave, kategori...">
       </label>
       <label>Kategori
-        <select id="categoryFilter"><option value="">Alle</option></select>
+        <select id="categoryFilter">
+          <option value="">Alle</option>
+        </select>
       </label>
     </section>
 
@@ -57,6 +61,7 @@
     <section id="help" class="view"></section>
   </main>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
+
 </html>
