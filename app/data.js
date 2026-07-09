@@ -7,13 +7,14 @@ import { $, esc } from './utils.js';
 
 const TASK_STORAGE_KEY = 'husets-aarshjul-tasks';
 
-export async function loadExample() {
-  const stored = readStoredTasks();
+export async function loadExample(forceDefault = false) {
+  const stored = forceDefault ? null : readStoredTasks();
   if (stored) {
     setTasks(stored, 'Gemte opgaver indlæst.');
     return;
   }
 
+  if (forceDefault) localStorage.removeItem(TASK_STORAGE_KEY);
   setTasks(DEFAULT_TASKS, 'Eksempeldata indlæst.');
 }
 
