@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Denne uge · Husets Årshjul</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-view="week">
+  <header class="app-header no-print">
+    <div>
+      <h1>Husets Årshjul</h1>
+      <p>Printvenlig oversigt for valgt uge.</p>
+    </div>
+    <div class="actions">
+      <label class="file-label">Indlæs tasks.json
+        <input id="fileInput" type="file" accept="application/json,.json">
+      </label>
+      <button id="loadExampleBtn" type="button">Indlæs eksempeldata</button>
+      <button id="printBtn" type="button">Print valgt uge</button>
+    </div>
+  </header>
+
+  <nav class="tabs no-print" aria-label="Visninger">
+    <a href="dashboard.html">Dashboard</a>
+    <a class="active" href="currentWeek.html">Denne uge</a>
+    <a href="yearWheel.html">Årshjul</a>
+    <a href="taskList.html">Opgaveliste</a>
+  </nav>
+
+  <main>
+    <section class="toolbar no-print">
+      <label>Valgt uge
+        <select id="weekSelect"></select>
+      </label>
+      <label>Søg
+        <input id="searchInput" type="search" placeholder="Rum, opgave, kategori...">
+      </label>
+      <label>Kategori
+        <select id="categoryFilter"><option value="">Alle</option></select>
+      </label>
+    </section>
+
+    <section id="status" class="status no-print"></section>
+    <section id="week" class="view active-view print-area"></section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
