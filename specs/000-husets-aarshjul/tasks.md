@@ -18,12 +18,12 @@
 
 ## App verification
 
-- [ ] Verify task data loading.
-- [ ] Verify tasks are rendered from one master list.
-- [ ] Verify selected week overview.
-- [ ] Verify week selector.
-- [ ] Verify print layout for selected week.
-- [ ] Verify that the app runs without backend/database/server-side code.
+- [X] Verify task data loading.
+- [x] Verify tasks are rendered from one master list.
+- [x] Verify selected week overview.
+- [x] Verify week selector.
+- [x] Verify print layout for selected week.
+- [x] Verify that the app runs without backend/database/server-side code.
 - [ ] Verify that the app can be hosted on GitHub Pages.
 
 ## Documentation
