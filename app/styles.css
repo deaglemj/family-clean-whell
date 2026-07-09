@@ -13,7 +13,6 @@
   --low: #ecfccb;
 }
 
-/* Base */
 * {
   box-sizing: border-box;
 }
@@ -36,27 +35,32 @@ p {
 
 button,
 .file-label,
+.tabs a,
 select,
 input {
   border: 1px solid var(--border);
   border-radius: .5rem;
   padding: .55rem .75rem;
   background: var(--panel);
+  color: inherit;
   font: inherit;
+  text-decoration: none;
 }
 
 button,
-.file-label {
+.file-label,
+.tabs a {
   cursor: pointer;
 }
 
 button.active,
-button:hover {
+button:hover,
+.tabs a.active,
+.tabs a:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
 
-/* Layout */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -111,7 +115,6 @@ main {
   display: block;
 }
 
-/* Components */
 .file-label input {
   display: none;
 }
@@ -129,6 +132,10 @@ main {
   border-radius: .75rem;
   padding: 1rem;
   background: var(--panel);
+}
+
+.intro-panel {
+  margin-top: 1rem;
 }
 
 .card strong {
@@ -165,7 +172,6 @@ main {
   background: var(--routine);
 }
 
-/* Tables */
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--border);
@@ -191,7 +197,6 @@ th {
   font-weight: 650;
 }
 
-/* Week wheel */
 .week-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -211,7 +216,6 @@ ul.clean {
   padding-left: 1.1rem;
 }
 
-/* Print */
 .print-title {
   display: none;
 }
