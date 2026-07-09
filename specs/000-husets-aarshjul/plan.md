@@ -2,39 +2,50 @@
 
 ## Implementation target
 
-Build the app inside `app/` as a static GitHub Pages-compatible webapp.
+Use the existing static app structure.
 
-Expected structure:
+Current structure:
 
 ```text
+index.html              # GitHub Pages entrypoint, redirects to app/
 app/
-  index.html
+  index.html            # Main app UI
+  app.js                # App bootstrap
+  constants.js
+  data.js
+  render.js
+  state.js
   styles.css
-  script.js
-  data/
-    tasks.json
+  utils.js
 ```
+
+## Architecture decision
+
+Keep the runnable webapp in `app/` for now.
+
+Reason:
+
+- GitHub Pages can serve it directly without a build step.
+- The root `index.html` already redirects to `app/`.
+- Moving files to `src/` would normally imply a build step or another redirect layer.
+- This project should stay simple: static HTML, CSS and JavaScript only.
+
+A future `src/` folder only makes sense if the project later adds a build tool such as Vite, Parcel, or another bundler.
 
 ## Approach
 
-1. Create the static app shell.
-2. Add a local task data file.
-3. Load tasks in JavaScript.
-4. Render the selected week overview.
-5. Add week selection.
-6. Add print styling for the weekly overview.
-7. Verify that the app works without backend services.
+1. Keep root `index.html` as the GitHub Pages entrypoint.
+2. Keep implementation files in `app/`.
+3. Use specs under `specs/` as the source of truth before changing code.
+4. Implement feature work only when it is described in a spec.
+5. Verify every change against the relevant acceptance criteria.
 
 ## Data format
 
-Use a simple JSON master list in `app/data/tasks.json`.
-
-Each task should be represented once in the master list.
+Use one master task list.
 
 The implementation may calculate weekly visibility from task fields, but must not copy task definitions into separate week-specific lists.
 
 ## GitHub Pages note
 
-GitHub Pages can serve the static files from the repository if configured to publish the relevant branch/folder.
-
-If the project uses `app/` as the source folder, GitHub Pages setup must account for that folder structure.
+The current structure is compatible with GitHub Pages because the root `index.html` forwards users to `app/`.
