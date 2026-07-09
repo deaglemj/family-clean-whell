@@ -5,7 +5,7 @@
 - [x] Add Docker project start spec.
 - [x] Add Docker project start implementation plan.
 - [x] Add Docker project start task checklist.
-- [ ] Align spec index with the new Docker feature.
+- [x] Align spec index with the new Docker feature.
 
 ## Docker files
 
