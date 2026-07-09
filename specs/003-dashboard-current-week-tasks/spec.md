@@ -28,11 +28,23 @@ The current week must use the same week numbering logic as the rest of the app.
 
 ### 3. Task list display
 
-The dashboard must display the tasks as a simple list.
+The dashboard must display the current week's tasks in the same table/list format as `currentWeek`.
 
-Each task item must show the task text.
+The dashboard task list must use these columns, in this order:
 
-If task completion checkboxes already exist in the app, the dashboard may reuse the existing checkbox/completion behavior for the listed tasks.
+| Column | Requirement |
+|---|---|
+| `✓` | Task completion checkbox/status column |
+| `Opgave` | Task text |
+| `Rum` | Room |
+| `Kategori` | Category |
+| `Estimeret tid` | Estimated time |
+| `Belastning` | Load/effort |
+| `Noter` | Notes |
+
+The dashboard must reuse the same task list rendering behavior as `currentWeek` where possible.
+
+If task completion checkboxes already exist in the app, the dashboard must reuse the existing checkbox/completion behavior for the listed tasks.
 
 ### 4. Remove dashboard filter row
 
@@ -78,6 +90,9 @@ This feature must not:
 ## Acceptance Criteria
 
 - Dashboard shows a task list for the current week.
+- Dashboard task list is shown in the same table/list format as `currentWeek`.
+- Dashboard task list uses exactly these visible columns in this order: `✓`, `Opgave`, `Rum`, `Kategori`, `Estimeret tid`, `Belastning`, `Noter`.
+- Dashboard reuses existing task completion checkbox behavior where available.
 - Dashboard does not show a filter row.
 - Dashboard does not show category, room, frequency, status, or search filters.
 - Dashboard does not show summaries, statistics, charts, metadata, help text, or unrelated sections.
