@@ -10,6 +10,10 @@ Current structure:
 index.html              # GitHub Pages entrypoint, redirects to app/
 app/
   index.html            # Main app UI
+  dashboard.html        # Main entry point
+  currentWeek.html      # Show only this week
+  yearWheel.html        # Show a calender view of the year with all tasks
+  taskList.html         # Show every task loaded
   app.js                # App bootstrap
   constants.js
   data.js
