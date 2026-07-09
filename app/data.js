@@ -1,4 +1,5 @@
 import { FREQUENCIES, REQUIRED_FIELDS } from './constants.js';
+import { DEFAULT_TASKS } from './defaultTasks.js';
 import { buildPlan } from './planning.js';
 import { renderAll } from './render.js';
 import { state } from './state.js';
@@ -6,20 +7,15 @@ import { $, esc } from './utils.js';
 
 const TASK_STORAGE_KEY = 'husets-aarshjul-tasks';
 
-export async function loadExample() {
-  const stored = readStoredTasks();
+export async function loadExample(forceDefault = false) {
+  const stored = forceDefault ? null : readStoredTasks();
   if (stored) {
     setTasks(stored, 'Gemte opgaver indlæst.');
     return;
   }
 
-  try {
-    const res = await fetch('tasks.json');
-    if (!res.ok) throw new Error('Kunne ikke indlæse tasks.json');
-    setTasks(await res.json(), 'Eksempeldata indlæst.');
-  } catch {
-    setStatus('Åbn via GitHub Pages eller vælg tasks.json manuelt, hvis browseren blokerer lokal fetch.');
-  }
+  if (forceDefault) localStorage.removeItem(TASK_STORAGE_KEY);
+  setTasks(DEFAULT_TASKS, 'Eksempeldata indlæst.');
 }
 
 export function handleFile(event) {

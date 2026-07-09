@@ -25,7 +25,7 @@ function populateWeekSelect() {
 
 function bindToolbar() {
   $('fileInput')?.addEventListener('change', handleFile);
-  $('loadExampleBtn')?.addEventListener('click', loadExample);
+  $('loadExampleBtn')?.addEventListener('click', () => loadExample(true));
   $('printBtn')?.addEventListener('click', printSelectedWeek);
   $('weekSelect')?.addEventListener('change', () => {
     localStorage.setItem('selectedWeek', $('weekSelect').value);
