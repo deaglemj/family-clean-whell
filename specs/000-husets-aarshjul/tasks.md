@@ -7,18 +7,22 @@
 - [x] Add initial product spec.
 - [x] Add implementation plan.
 - [x] Add implementation checklist.
+- [x] Align spec plan with existing repository structure.
 
-## App implementation
+## Existing app structure
 
-- [ ] Create `app/index.html`.
-- [ ] Create `app/styles.css`.
-- [ ] Create `app/script.js`.
-- [ ] Create `app/data/tasks.json`.
-- [ ] Load tasks from the local data file.
-- [ ] Render tasks from one master list.
-- [ ] Add selected week overview.
-- [ ] Add week selector.
-- [ ] Add print layout for selected week.
+- [x] Keep root `index.html` as GitHub Pages entrypoint.
+- [x] Keep main app UI in `app/index.html`.
+- [x] Keep JavaScript modules in `app/`.
+- [x] Keep stylesheet in `app/styles.css`.
+
+## App verification
+
+- [ ] Verify task data loading.
+- [ ] Verify tasks are rendered from one master list.
+- [ ] Verify selected week overview.
+- [ ] Verify week selector.
+- [ ] Verify print layout for selected week.
 - [ ] Verify that the app runs without backend/database/server-side code.
 - [ ] Verify that the app can be hosted on GitHub Pages.
 
